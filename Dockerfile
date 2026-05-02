@@ -7,7 +7,7 @@
 FROM node:20-alpine AS frontend-build
 WORKDIR /app/frontend
 COPY frontend/package*.json ./
-RUN npm ci --production=false
+RUN npm ci
 COPY frontend/ ./
 RUN npm run build
 
@@ -15,20 +15,21 @@ RUN npm run build
 FROM node:20-alpine AS backend-build
 WORKDIR /app/backend
 COPY backend/package*.json ./
-RUN npm ci --production=false
+RUN npm ci
 COPY backend/ ./
+COPY shared/ /app/shared/
 RUN npm run build
 
 # Stage 3: Production image
 FROM node:20-alpine AS production
 WORKDIR /app
 
-# Copy backend dist and deps
+# Copy backend dist and production deps
 COPY backend/package*.json ./
-RUN npm ci --production
+RUN npm ci --omit=dev
 COPY --from=backend-build /app/backend/dist ./dist
 
-# Copy frontend build
+# Copy frontend build output
 COPY --from=frontend-build /app/frontend/dist ./public
 
 # Copy shared types
@@ -36,12 +37,7 @@ COPY shared/ ./shared/
 
 # Set environment
 ENV NODE_ENV=production
-ENV PORT=8080
 
 EXPOSE 8080
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:8080/api/health || exit 1
 
 CMD ["node", "dist/app.js"]

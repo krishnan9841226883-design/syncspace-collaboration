@@ -1,0 +1,16 @@
+# Ignore git, deps, and env files when uploading to Cloud Build
+.git
+.gitignore
+.gcloudignore
+*.md
+
+# Node modules (will be installed during Docker build)
+**/node_modules/
+
+# Environment files (secrets)
+**/.env
+**/.env.local
+
+# Test and coverage
+coverage/
+.firebase
