@@ -3,7 +3,7 @@
  * Real-time Kanban with Firestore sync and drag-and-drop
  */
 
-import { useState, useCallback, useMemo, memo, type FormEvent } from 'react';
+import { useState, useCallback, useMemo, type FormEvent } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTasks } from '../services/firestoreService';
 
