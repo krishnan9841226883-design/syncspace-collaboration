@@ -1,0 +1,58 @@
+rules_version = '2';
+
+/**
+ * SyncSpace — Cloud Storage Security Rules
+ * Controls file upload access and size limits
+ */
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    /** Check authentication */
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    /** Validate file size (max 10MB) */
+    function isValidFileSize() {
+      return request.resource.size < 10 * 1024 * 1024;
+    }
+    
+    /** Validate file type */
+    function isValidFileType() {
+      return request.resource.contentType.matches('image/.*') ||
+             request.resource.contentType.matches('application/pdf') ||
+             request.resource.contentType.matches('text/.*') ||
+             request.resource.contentType.matches('application/.*');
+    }
+
+    // User profile photos
+    match /profiles/{userId}/{fileName} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && 
+        request.auth.uid == userId && 
+        isValidFileSize() && 
+        request.resource.contentType.matches('image/.*');
+    }
+
+    // Task attachments
+    match /tasks/{taskId}/{fileName} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && 
+        isValidFileSize() && 
+        isValidFileType();
+    }
+
+    // Channel file uploads
+    match /channels/{channelId}/{fileName} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && 
+        isValidFileSize() && 
+        isValidFileType();
+    }
+
+    // Default: deny all
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
