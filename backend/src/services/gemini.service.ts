@@ -62,7 +62,7 @@ export class GeminiService {
         throw new Error(`Gemini API error: ${response.status}`);
       }
 
-      const data = await response.json();
+      const data: any = await response.json();
       return data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response generated';
     } catch (error) {
       console.error('Gemini API error:', error);

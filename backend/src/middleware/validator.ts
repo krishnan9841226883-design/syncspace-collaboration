@@ -17,7 +17,7 @@ export function validateBody<T extends ZodSchema>(schema: T) {
       next();
     } catch (error) {
       if (error instanceof ZodError) {
-        const formattedErrors = error.errors.map((err) => ({
+        const formattedErrors = error.issues.map((err) => ({
           field: err.path.join('.'),
           message: err.message,
         }));
@@ -47,7 +47,7 @@ export function validateQuery<T extends ZodSchema>(schema: T) {
         res.status(400).json({
           success: false,
           error: 'Invalid query parameters',
-          details: error.errors.map((e) => ({
+          details: error.issues.map((e) => ({
             field: e.path.join('.'),
             message: e.message,
           })),
