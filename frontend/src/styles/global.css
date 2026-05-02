@@ -248,3 +248,65 @@ body {
     display: none !important;
   }
 }
+
+/* ===================== Login Divider ===================== */
+.login-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0;
+  width: 100%;
+}
+
+.login-divider-line {
+  flex: 1;
+  height: 1px;
+  background: rgba(255,255,255,0.1);
+}
+
+.login-divider-text {
+  color: rgba(255,255,255,0.4);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.login-btn-demo {
+  background: transparent;
+  color: white;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.login-footer {
+  font-size: 11px;
+  color: rgba(255,255,255,0.3);
+  margin-top: 16px;
+  text-align: center;
+}
+
+/* ===================== Sidebar Demo Badge ===================== */
+.sidebar-demo-badge {
+  font-size: 10px;
+  padding: 2px 6px;
+  background: rgba(245,158,11,0.2);
+  color: #f59e0b;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+/* ===================== Focus Visible ===================== */
+:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+/* ===================== Reduced Motion ===================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

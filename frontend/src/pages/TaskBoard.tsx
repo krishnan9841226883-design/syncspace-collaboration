@@ -3,7 +3,7 @@
  * Real-time Kanban with Firestore sync and drag-and-drop
  */
 
-import { useState, useCallback, type FormEvent } from 'react';
+import { useState, useCallback, useMemo, memo, type FormEvent } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTasks } from '../services/firestoreService';
 
@@ -19,12 +19,13 @@ interface TaskData {
   creatorId?: string;
 }
 
-const COLUMNS = [
+/** Kanban column configuration — frozen for immutability */
+const COLUMNS = Object.freeze([
   { id: 'todo', title: 'To Do' },
   { id: 'in_progress', title: 'In Progress' },
   { id: 'review', title: 'Review' },
   { id: 'done', title: 'Done' },
-];
+] as const);
 
 // Fallback demo data for when Firestore is empty or in demo mode
 const demoTasks: TaskData[] = [
@@ -104,9 +105,10 @@ export default function TaskBoard() {
   const [showModal, setShowModal] = useState(false);
   const [draggedTask, setDraggedTask] = useState<{ taskId: string; fromColumn: string } | null>(null);
 
-  // Use Firestore tasks if available, otherwise use demo data
-  const allTasks: TaskData[] = (!isDemoMode && firestoreTasks.length > 0)
-    ? firestoreTasks.map(t => ({
+  /** Memoized task list — recalculates only when source data changes */
+  const allTasks: TaskData[] = useMemo(() => {
+    if (!isDemoMode && firestoreTasks.length > 0) {
+      return firestoreTasks.map(t => ({
         id: t.id,
         title: t.title || '',
         description: t.description || '',
@@ -116,13 +118,16 @@ export default function TaskBoard() {
         assignee: t.assignee || '',
         dueDate: t.dueDate,
         creatorId: t.creatorId,
-      }))
-    : localTasks;
+      }));
+    }
+    return localTasks;
+  }, [isDemoMode, firestoreTasks, localTasks]);
 
-  const columns = COLUMNS.map(col => ({
-    ...col,
-    tasks: allTasks.filter(t => t.status === col.id),
-  }));
+  /** Memoized column grouping — recalculates only when tasks change */
+  const columns = useMemo(
+    () => COLUMNS.map(col => ({ ...col, tasks: allTasks.filter(t => t.status === col.id) })),
+    [allTasks]
+  );
 
   const handleDragStart = (taskId: string, fromColumn: string) => {
     setDraggedTask({ taskId, fromColumn });

@@ -42,6 +42,7 @@ export const helmetConfig = helmet({
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3000',
+  'https://syncspace-735461384035.us-central1.run.app',
   process.env.FRONTEND_URL,
 ].filter(Boolean) as string[];
 
