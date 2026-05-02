@@ -74,7 +74,7 @@ router.get('/', async (req: AuthenticatedRequest, res, next) => {
  */
 router.get('/:id', async (req: AuthenticatedRequest, res, next) => {
   try {
-    const doc = await db.collection('tasks').doc(req.params.id).get();
+    const doc = await db.collection('tasks').doc(req.params.id as string).get();
     
     if (!doc.exists) {
       throw new NotFoundError('Task');
@@ -138,7 +138,7 @@ router.post('/', validateBody(taskSchema), async (req: AuthenticatedRequest, res
  */
 router.put('/:id', validateBody(taskSchema), async (req: AuthenticatedRequest, res, next) => {
   try {
-    const taskRef = db.collection('tasks').doc(req.params.id);
+    const taskRef = db.collection('tasks').doc(req.params.id as string);
     const doc = await taskRef.get();
     
     if (!doc.exists) {
@@ -161,14 +161,14 @@ router.put('/:id', validateBody(taskSchema), async (req: AuthenticatedRequest, r
       userPhoto: req.user!.picture,
       action: 'updated task',
       targetType: 'task',
-      targetId: req.params.id,
+      targetId: req.params.id as string,
       targetName: req.body.title || doc.data()?.title,
       timestamp: now,
     });
 
     res.json({
       success: true,
-      data: { id: req.params.id, ...doc.data(), ...updates },
+      data: { id: req.params.id as string, ...doc.data(), ...updates },
       message: 'Task updated successfully',
     });
   } catch (error) {
@@ -183,7 +183,7 @@ router.put('/:id', validateBody(taskSchema), async (req: AuthenticatedRequest, r
 router.patch('/:id/status', async (req: AuthenticatedRequest, res, next) => {
   try {
     const { status, order } = req.body;
-    const taskRef = db.collection('tasks').doc(req.params.id);
+    const taskRef = db.collection('tasks').doc(req.params.id as string);
     const doc = await taskRef.get();
 
     if (!doc.exists) {
@@ -208,7 +208,7 @@ router.patch('/:id/status', async (req: AuthenticatedRequest, res, next) => {
 
     res.json({
       success: true,
-      data: { id: req.params.id, ...doc.data(), ...updates },
+      data: { id: req.params.id as string, ...doc.data(), ...updates },
     });
   } catch (error) {
     next(error);
@@ -221,7 +221,7 @@ router.patch('/:id/status', async (req: AuthenticatedRequest, res, next) => {
  */
 router.delete('/:id', async (req: AuthenticatedRequest, res, next) => {
   try {
-    const taskRef = db.collection('tasks').doc(req.params.id);
+    const taskRef = db.collection('tasks').doc(req.params.id as string);
     const doc = await taskRef.get();
     
     if (!doc.exists) {
@@ -237,7 +237,7 @@ router.delete('/:id', async (req: AuthenticatedRequest, res, next) => {
       userPhoto: req.user!.picture,
       action: 'deleted task',
       targetType: 'task',
-      targetId: req.params.id,
+      targetId: req.params.id as string,
       targetName: doc.data()?.title || 'Unknown',
       timestamp: new Date().toISOString(),
     });
@@ -252,3 +252,4 @@ router.delete('/:id', async (req: AuthenticatedRequest, res, next) => {
 });
 
 export default router;
+

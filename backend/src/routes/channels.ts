@@ -102,7 +102,7 @@ router.post('/', validateBody(channelSchema), async (req: AuthenticatedRequest, 
  */
 router.get('/:id/messages', async (req: AuthenticatedRequest, res, next) => {
   try {
-    const channelDoc = await db.collection('channels').doc(req.params.id).get();
+    const channelDoc = await db.collection('channels').doc(req.params.id as string).get();
     
     if (!channelDoc.exists) {
       throw new NotFoundError('Channel');
@@ -120,7 +120,7 @@ router.get('/:id/messages', async (req: AuthenticatedRequest, res, next) => {
 
     let query = db
       .collection('channels')
-      .doc(req.params.id)
+      .doc(req.params.id as string)
       .collection('messages')
       .orderBy('createdAt', 'desc')
       .limit(pageSize);
@@ -132,7 +132,7 @@ router.get('/:id/messages', async (req: AuthenticatedRequest, res, next) => {
     const snapshot = await query.get();
     const messages = snapshot.docs.map((doc) => ({
       id: doc.id,
-      channelId: req.params.id,
+      channelId: req.params.id as string,
       ...doc.data(),
     }));
 
@@ -152,7 +152,7 @@ router.get('/:id/messages', async (req: AuthenticatedRequest, res, next) => {
  */
 router.post('/:id/messages', validateBody(messageSchema), async (req: AuthenticatedRequest, res, next) => {
   try {
-    const channelRef = db.collection('channels').doc(req.params.id);
+    const channelRef = db.collection('channels').doc(req.params.id as string);
     const channelDoc = await channelRef.get();
     
     if (!channelDoc.exists) {
@@ -164,7 +164,7 @@ router.post('/:id/messages', validateBody(messageSchema), async (req: Authentica
 
     const message = {
       id: messageId,
-      channelId: req.params.id,
+      channelId: req.params.id as string,
       senderId: req.user!.uid,
       senderName: req.user!.name,
       senderPhoto: req.user!.picture,
@@ -194,7 +194,7 @@ router.post('/:id/messages', validateBody(messageSchema), async (req: Authentica
  */
 router.post('/:id/join', async (req: AuthenticatedRequest, res, next) => {
   try {
-    const channelRef = db.collection('channels').doc(req.params.id);
+    const channelRef = db.collection('channels').doc(req.params.id as string);
     const channelDoc = await channelRef.get();
 
     if (!channelDoc.exists) {
@@ -223,3 +223,4 @@ router.post('/:id/join', async (req: AuthenticatedRequest, res, next) => {
 });
 
 export default router;
+

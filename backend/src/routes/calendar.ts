@@ -45,9 +45,9 @@ router.post('/events', validateBody(calendarEventSchema), async (req: Authentica
 /** DELETE /api/calendar/events/:id */
 router.delete('/events/:id', async (req: AuthenticatedRequest, res, next) => {
   try {
-    const doc = await db.collection('events').doc(req.params.id).get();
+    const doc = await db.collection('events').doc(req.params.id as string).get();
     if (!doc.exists) throw new NotFoundError('Event');
-    await db.collection('events').doc(req.params.id).delete();
+    await db.collection('events').doc(req.params.id as string).delete();
     res.json({ success: true, message: 'Event deleted' });
   } catch (error) { next(error); }
 });
@@ -67,3 +67,4 @@ router.post('/meet-link', async (req: AuthenticatedRequest, res, next) => {
 });
 
 export default router;
+
