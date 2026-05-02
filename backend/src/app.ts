@@ -76,11 +76,12 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 // =================== Start Server ===================
-app.listen(PORT, () => {
+const HOST = '0.0.0.0';
+app.listen(parseInt(String(PORT), 10), HOST, () => {
   console.log(`
   ╔══════════════════════════════════════════╗
   ║   🚀 SyncSpace API Server               ║
-  ║   Running on http://localhost:${PORT}      ║
+  ║   Running on http://${HOST}:${PORT}        ║
   ║   Environment: ${(process.env.NODE_ENV || 'development').padEnd(20)}  ║
   ╚══════════════════════════════════════════╝
   `);
