@@ -68,8 +68,8 @@ if (process.env.NODE_ENV === 'production') {
   const publicDir = path.join(__dirname, '..', 'public');
   app.use(express.static(publicDir));
   
-  // SPA catch-all: serve index.html for non-API routes
-  app.get('*', (_req, res) => {
+  // SPA catch-all: serve index.html for non-API routes (Express 5 syntax)
+  app.get('{*path}', (_req, res) => {
     res.sendFile(path.join(publicDir, 'index.html'));
   });
   console.log(`[SyncSpace] Serving frontend from ${publicDir}`);

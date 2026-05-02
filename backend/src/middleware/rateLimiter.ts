@@ -17,9 +17,7 @@ export const generalLimiter = rateLimit({
     success: false,
     error: 'Too many requests. Please try again later.',
   },
-  keyGenerator: (req) => {
-    return req.ip || req.headers['x-forwarded-for']?.toString() || 'unknown';
-  },
+  validate: { xForwardedForHeader: false },
 });
 
 /**
