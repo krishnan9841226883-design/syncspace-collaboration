@@ -59,7 +59,7 @@ app.use('/api/calendar', calendarRoutes);
 app.use('/api/analytics', analyticsRoutes);
 
 // =================== Error Handling (API) ===================
-app.use('/api/*', notFoundHandler);
+app.use('/api/{*path}', notFoundHandler);
 app.use(errorHandler);
 
 // =================== Serve Frontend (Production) ===================
